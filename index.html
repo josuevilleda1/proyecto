@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Karlita - Mensaje Especial</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: black;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            filter: brightness(50%);
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+        .texto, .mensaje-final {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            text-align: center;
+            color: white;
+            text-shadow: 0 0 20px #ff0080, 0 0 30px #ff0080, 0 0 40px #ff0080;
+            opacity: 0;
+            animation: aparecer 2s ease-in-out forwards;
+        }
+        .mensaje-final {
+            font-size: 50px;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff;
+            z-index: 5;
+        }
+        @keyframes aparecer {
+            from {opacity: 0; transform: translate(-50%, -60%);}
+            to {opacity: 1; transform: translate(-50%, -50%);}
+        }
+        #starsCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 4;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<video id="videoFondo" autoplay loop muted>
+    <source src="120fbdbdf187da1d66a18ab1917c795a.mp4" type="video/mp4">
+    Tu navegador no soporta videos HTML5.
+</video>
+
+<canvas id="fireworks"></canvas>
+
+<div class="texto" id="nombreKarlita">Karlita</div>
+
+<canvas id="starsCanvas"></canvas>
+
+<div class="mensaje-final" id="mensajeFinal">Espero que te mejores mi niña</div>
+
+<script>
+// Inicializar
+const video = document.getElementById('videoFondo');
+const fireworksCanvas = document.getElementById('fireworks');
+const ctx = fireworksCanvas.getContext('2d');
+let W = window.innerWidth;
+let H = window.innerHeight;
+fireworksCanvas.width = W;
+fireworksCanvas.height = H;
+
+const nombreKarlita = document.getElementById('nombreKarlita');
+const starsCanvas = document.getElementById('starsCanvas');
+const starsCtx = starsCanvas.getContext('2d');
+starsCanvas.width = W;
+starsCanvas.height = H;
+const mensajeFinal = document.getElementById('mensajeFinal');
+
+// Fuegos artificiales
+function random(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function Firework() {
+    this.x = random(0, W);
+    this.y = H;
+    this.targetX = random(W/4, W*3/4);
+    this.targetY = random(H/4, H/2);
+    this.speed = random(3, 6);
+    this.angle = Math.atan2(this.targetY - this.y, this.targetX - this.x);
+    this.distance = Math.hypot(this.targetX - this.x, this.targetY - this.y);
+    this.traveled = 0;
+    this.boomed = false;
+}
+
+Firework.prototype.update = function(index) {
+    let vx = Math.cos(this.angle) * this.speed;
+    let vy = Math.sin(this.angle) * this.speed;
+    this.x += vx;
+    this.y += vy;
+    this.traveled += Math.hypot(vx, vy);
+
+    if (this.traveled >= this.distance) {
+        this.boomed = true;
+        createParticles(this.x, this.y);
+        fireworks.splice(index, 1);
+    }
+}
+
+Firework.prototype.draw = function() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+}
+
+function Particle(x, y) {
+    this.x = x;
+    this.y = y;
+    this.radius = 2;
+    this.speed = random(1, 5);
+    this.angle = random(0, Math.PI * 2);
+    this.alpha = 1;
+    this.decay = random(0.01, 0.03);
+    this.color = hsl(${random(0,360)}, 100%, 50%);
+}
+
+Particle.prototype.update = function(index) {
+    this.x += Math.cos(this.angle) * this.speed;
+    this.y += Math.sin(this.angle) * this.speed;
+    this.alpha -= this.decay;
+    if (this.alpha <= 0) {
+        particles.splice(index, 1);
+    }
+}
+
+Particle.prototype.draw = function() {
+    ctx.globalAlpha = this.alpha;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+}
+
+let fireworks = [];
+let particles = [];
+
+function createParticles(x, y) {
+    for (let i = 0; i < 50; i++) {
+        particles.push(new Particle(x, y));
+    }
+}
+
+function animateFireworks() {
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.fillRect(0, 0, W, H);
+
+    fireworks.forEach((firework, index) => {
+        firework.update(index);
+        firework.draw();
+    });
+
+    particles.forEach((particle, index) => {
+        particle.update(index);
+        particle.draw();
+    });
+
+    if (Math.random() < 0.05) {
+        fireworks.push(new Firework());
+    }
+
+    if (!transitionDone) {
+        requestAnimationFrame(animateFireworks);
+    }
+}
+
+// Cielo estrellado
+let stars = [];
+for (let i = 0; i < 200; i++) {
+    stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        radius: Math.random() * 1.5,
+        alpha: Math.random(),
+        delta: Math.random() * 0.02
+    });
+}
+
+function animateStars() {
+    starsCtx.clearRect(0, 0, W, H);
+    stars.forEach(star => {
+        starsCtx.beginPath();
+        starsCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        starsCtx.fillStyle = rgba(255, 255, 255, ${star.alpha});
+        starsCtx.fill();
+
+        star.alpha += star.delta;
+        if (star.alpha <= 0 || star.alpha >= 1) {
+            star.delta = -star.delta;
+        }
+    });
+    requestAnimationFrame(animateStars);
+}
+
+// Controlar transiciones
+let transitionDone = false;
+setTimeout(() => {
+    // Después de 15 segundos
+    video.style.display = 'none';
+    fireworksCanvas.style.display = 'none';
+    nombreKarlita.style.display = 'none';
+
+    starsCanvas.style.display = 'block';
+    mensajeFinal.style.opacity = '1';
+    animateStars();
+
+    transitionDone = true;
+}, 15000); // Tiempo en milisegundos (15 segundos)
+
+animateFireworks();
+
+</script>
+
+</body>
+</html>
+
+
