@@ -1,5 +1,3 @@
-import elevator.elevator.Direction;
-
 public class peticionusuario{
     int nivel;
     long tiempo;
