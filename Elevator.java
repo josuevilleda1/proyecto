@@ -10,13 +10,13 @@ import java.util.List;
  */
 public class Elevator extends Thread {
     //Tiempo de movimiento en milisegundos, 1 segundo por default
-    public static  int moveTime = 1000;
+    private static  int moveTime = 1000;
     //Tiempo que dura parado en milisegundos, 1 segundo por default
-    public static int stopTime = 1000;
+    private static int stopTime = 1000;
     //Niveles máximos del elevador, 10 niveles por default
-    public static int maxLevel = 10;
+    private static int maxLevel = 10;
     //Cantidad de sotanos, si existen;
-    public static int subfloors = 0;
+    private static int subfloors = 0;
     //Si el elevador debería estar funcionando
     public static boolean isRunning = false;
     //Contador de elevadores existentes
@@ -28,7 +28,6 @@ public class Elevator extends Thread {
     private int previousStop;
     private LinkedList<Integer> list;
     private ElevatorLogger logger;
-    private boolean isMoving;
 
     /**
      * Crea una nueva instancia de Elevator.
@@ -104,6 +103,24 @@ public class Elevator extends Thread {
         return getRealLevel(this.getLevel());
     }
 
+    public static void configure(int moveTime, int stopTime, int maxFloors, int subfloors) {
+        if (!Elevator.isRunning) {
+            Elevator.moveTime = (moveTime > 0)? moveTime : 1000;
+            Elevator.stopTime = (stopTime > 0)? stopTime : 1000;
+            Elevator.maxLevel = (maxLevel > 1)? maxLevel : 10;
+            Elevator.subfloors = (subfloors > 0 && subfloors < Elevator.maxLevel)? subfloors: 0;
+        }
+    }
+
+    public static void configure(int moveTime, int stopTime, int maxFloors){
+        if (!Elevator.isRunning) {
+            Elevator.moveTime = (moveTime > 0)? moveTime : 1000;
+            Elevator.stopTime = (stopTime > 0)? stopTime : 1000;
+            Elevator.maxLevel = (maxLevel > 1)? maxLevel : 10;
+            Elevator.subfloors = 0;
+        }
+    }
+
     /** 
      * Mueve el elevador al nivel indicado. El tiempo de desplazamiento entre niveles viene dado por moveTime.
      * Valida que el nivel objetivo esté dentro de los límites configurados.
@@ -113,11 +130,7 @@ public class Elevator extends Thread {
      *
      * @param targetLevel Nivel destino al que se desea mover el elevador (1..maxLevel)
      */
-    public void move(int targetLevel){
-        if (this.isMoving){
-            logger.logInfo("Elevator is already moving to another floor.", Level.WARNING);
-            return;
-        }
+    public synchronized void move(int targetLevel){
         if (targetLevel > Elevator.maxLevel || targetLevel < 1) {
             logger.logInfo(String.format("Level %d is unable to be reached (max level: %d).", targetLevel, Elevator.maxLevel), Level.WARNING);
             return;
@@ -135,7 +148,6 @@ public class Elevator extends Thread {
         long start = System.currentTimeMillis();
 
         this.previousStop = level;
-        this.isMoving = true;
 
         logger.logInfo(String.format("Starting movement to floor %d (Real level: %s). Direction: %s. Expected time: %dms", targetLevel, this.getRealLevel(targetLevel), this.direction.toString(), Math.abs(movement) * Elevator.moveTime), Level.INFO);
         while(targetLevel != level){
@@ -145,13 +157,11 @@ public class Elevator extends Thread {
             } catch (InterruptedException e) {
                 this.addCommand(targetLevel);
                 logger.logInfo(String.format("Stopped execution at level %d (Real level: %s) with queue %s. Added level back to Queue.", this. level, this.getRealLevel(), this.getListCopy()), Level.WARNING);
-                this.isMoving = false;
             }
         }
 
         long end = System.currentTimeMillis();
         logger.logInfo(String.format("Elevator finished moving to level %d (Real level: %s) with actual time elapsed of %dms", targetLevel, this.getRealLevel(targetLevel), end - start), Level.INFO);
-        this.isMoving = false;
     }
 
     /**
@@ -228,6 +238,13 @@ public class Elevator extends Thread {
         
     }
 
+    @Override
+    public void start() {
+        logger.logInfo(String.format("Elevator started/resumed operation with queue %s", this.list), Level.INFO);
+        super.start();
+    }
+
+    @Override
     public void run(){
 
     }
