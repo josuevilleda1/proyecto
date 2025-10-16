@@ -1,0 +1,8 @@
+Oct 15, 2025 8:42:00 PM ElevatorLogger logInfo
+INFO: test: Mensaje de prueba para elevador 1
+Oct 15, 2025 8:42:00 PM ElevatorLogger logInfo
+INFO: test: Mensaje de prueba para elevador 1, parte 2
+Oct 15, 2025 8:42:00 PM ElevatorLogger logInfo
+WARNING: test: Mensaje de error para elevador 1
+Oct 15, 2025 8:42:00 PM ElevatorLogger logInfo
+SEVERE: test: Error fatal Encontrado en elevador

@@ -103,6 +103,13 @@ public class Elevator extends Thread {
         return getRealLevel(this.getLevel());
     }
 
+    /**
+     * Configura los elevadores.
+     * @param moveTime Tiempo de movimiento de los elevadores en milisegundos, por defecto 1000ms.
+     * @param stopTime Tiempo de recogida/descarga de pasageros en milisegundos, por defecto 1000ms.
+     * @param maxFloors Niveles (incluyendo sotanos). Por defecto 10
+     * @param subfloors Sotanos que existen en funcion de los niveles. Por defecto 0.
+     */
     public static void configure(int moveTime, int stopTime, int maxFloors, int subfloors) {
         if (!Elevator.isRunning) {
             Elevator.moveTime = (moveTime > 0)? moveTime : 1000;
@@ -112,6 +119,12 @@ public class Elevator extends Thread {
         }
     }
 
+    /**
+     * Configura los elevadores, asumiendo que no hay sotanos.
+     * @param moveTime Tiempo de movimiento de los elevadores en milisegundos, por defecto 1000ms.
+     * @param stopTime Tiempo de recogida/descarga de pasageros en milisegundos, por defecto 1000ms.
+     * @param maxFloors Niveles. Por defecto 10 niveles.
+     */
     public static void configure(int moveTime, int stopTime, int maxFloors){
         if (!Elevator.isRunning) {
             Elevator.moveTime = (moveTime > 0)? moveTime : 1000;
