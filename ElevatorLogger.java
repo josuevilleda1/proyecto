@@ -4,14 +4,6 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.Level;
 
-/**
- * Direccion del elevador.
- */
-enum Direction {
-    DOWN,
-    UP
-}
-
 class ElevatorLogger{
     Logger logger;
     FileHandler fh;
