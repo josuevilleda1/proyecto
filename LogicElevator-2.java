@@ -27,7 +27,13 @@ public class LogicElevator {
         this.solicitudes = new ArrayList<>();
         this.trabajando = false;
         this.procesadores = new Thread(this::procesarSolicitudes);
-        this.logger = Logger.getLogger("LogicElevator");// preguntar como copiar los logger en un archivo 
+        this.logger = try {
+                        FileHandler fileHandler = new FileHandler("Logs/LogicElevator.log", true);
+                        fileHandler.setFormatter(new SimpleFormatter());
+                        logger.addHandler(fileHandler);
+                    } catch (IOException e) {
+                        System.err.println("Error creando archivo de log: " + e.getMessage());
+                    }
     }
 // esta parte solo inicia el manager de los elevadores solo es un start como tal
     public void start() {
