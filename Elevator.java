@@ -17,16 +17,22 @@ public class Elevator extends Thread {
     private static int maxLevel = 10;
     //Cantidad de sotanos, si existen;
     private static int subfloors = 0;
-    //Si el elevador debería estar funcionando
-    public static boolean isRunning = false;
     //Contador de elevadores existentes
     private static byte elevators = 0;
+
     
+    /**
+     * Si el elevador debería estar funcionando
+     */
+    private Boolean isRunning;
+    //Causa que el elevador termine su ejecución, matándolo
+    private boolean kill;
     private int id;
     private Direction direction;
     private int level;
     private int previousStop;
     private LinkedList<Integer> list;
+    private boolean sync;
     private ElevatorLogger logger;
 
     /**
@@ -41,6 +47,10 @@ public class Elevator extends Thread {
         this.level = 1;
         this.previousStop = 1;
         this.logger = new ElevatorLogger(id);
+        this.sync = false;
+
+        this.isRunning = true;
+        this.kill = false;
 
         logger.logInfo(String.format("Elevator created with moveTime: %dms, stopTime %dms, max level: %d, %d of wich are subfloors", Elevator.moveTime, Elevator.stopTime, Elevator.maxLevel, Elevator.subfloors), Level.INFO);
     }
@@ -83,7 +93,9 @@ public class Elevator extends Thread {
      */
     public void reset() {
         this.list.clear();
+        logger.logInfo("Elevator reset. Waiting for previous movement to finish...", Level.INFO);
         this.move(1);
+        logger.logInfo("Elevator reset succesfully.", Level.INFO);
     }
 
     /**
@@ -111,12 +123,10 @@ public class Elevator extends Thread {
      * @param subfloors Sotanos que existen en funcion de los niveles. Por defecto 0.
      */
     public static void configure(int moveTime, int stopTime, int maxFloors, int subfloors) {
-        if (!Elevator.isRunning) {
             Elevator.moveTime = (moveTime > 0)? moveTime : 1000;
             Elevator.stopTime = (stopTime > 0)? stopTime : 1000;
             Elevator.maxLevel = (maxLevel > 1)? maxFloors : 10;
             Elevator.subfloors = (subfloors >= 0 && subfloors < Elevator.maxLevel)? subfloors: 0;
-        }
     }
 
     /**
@@ -127,6 +137,43 @@ public class Elevator extends Thread {
      */
     public static void configure(int moveTime, int stopTime, int maxFloors){
         configure(moveTime, stopTime, maxFloors, 0);
+    }
+
+    /**
+     * Detiene la ejecución y notifica a los consumidores de la lista para que continuen su ejecución.
+     */
+    public void stopExecution(){
+        if (!this.isRunning) {
+            logger.logInfo("Execution is already stopped. Ignoring.", Level.WARNING);
+            return;
+        }
+        this.isRunning = false;
+        logger.logInfo("Execution stopped.", Level.INFO);
+        synchronized(this.list){
+            this.list.notify();
+        }
+    }
+
+    public void resumeExecution(){
+        if (this.isRunning) {
+            logger.logInfo("Execution already resumed. Ignoring.", Level.WARNING);
+            return;
+        }
+        this.isRunning = true;
+        logger.logInfo("Execution resumed.", Level.INFO);
+        synchronized(isRunning){
+            isRunning.notify();
+        }
+    }
+
+    /**
+     * Mata al elevador. Una vez muerto, no puede ser reactivado.
+     */
+    public void kill(){
+        logger.logInfo("Elevator killed.", Level.INFO);
+        this.isRunning = false;
+        this.kill = true;
+        notify();
     }
 
     /** 
@@ -195,46 +242,50 @@ public class Elevator extends Thread {
         Direction currentDirection = this.direction;
         List<Integer> previousList = this.getListCopy();
 
-        if (list.isEmpty()){
+        if (this.getListCopy().isEmpty()){
             list.addFirst(level);
         } else {
             try {
-                if (level > this.level && level < previousList.getFirst()){
-                    list.addFirst(level);
-                    logger.logInfo(String.format("Succesfully added level %d (Real level: %s) to list. \n Previous list: %s \n New list: %s", level, this.getRealLevel(level), previousList, this.getListCopy()), Level.INFO);
-                    return;
-                }
-
-                int i = 0;
-                for(i = 0; i < list.size(); i++){
-                    if (i != 0){
-                        if(currentDirection == Direction.UP && list.get(i) < list.get(i-1)){
-                            if (list.get(i) < level){
-                                list.add(i, level);
-                                i = 0;
-                                break;
-                            }
-                            currentDirection = Direction.DOWN;
-                        } 
-                        else {
-                            if (currentDirection == Direction.DOWN && list.get(i) > level){
-                                list.add(i, level);
-                                i = 0;
-                                break;
-                            }
-                            currentDirection = Direction.UP;
+                    if (level > this.level && level < previousList.getFirst()){
+                        list.addFirst(level);
+                        logger.logInfo(String.format("Succesfully added level %d (Real level: %s) to list. \n Previous list: %s \n New list: %s", level, this.getRealLevel(level), previousList, this.getListCopy()), Level.INFO);
+                        synchronized(this.list){
+                            this.list.notify();
                         }
+                        return;
                     }
 
-                    // [6, 8, 10, 4, 3] <- 7
-                    // [6, 8, 10, 4, 1] <- 2
-                    if ((currentDirection == Direction.UP && level > previousList.getFirst() && level < this.list.get(i))  || (currentDirection == Direction.DOWN && level < previousList.getFirst() && level > this.list.get(i) )){
-                        list.add(i, level);
-                        i = 0;
-                        break;
-                    }
+                    int i = 0;
+                    for(i = 0; i < list.size(); i++){
+                        if (i != 0){
+                            if(currentDirection == Direction.UP && list.get(i) < list.get(i-1)){
+                                if (list.get(i) < level){
+                                    list.add(i, level);
+                                    i = 0;
+                                    break;
+                                }
+                                currentDirection = Direction.DOWN;
+                            } 
+                            else {
+                                if (currentDirection == Direction.DOWN && list.get(i) > level){
+                                    list.add(i, level);
+                                    i = 0;
+                                    break;
+                                }
+                                currentDirection = Direction.UP;
+                            }
+                        }
 
-                    currentDirection =  this.direction;
+                        // [6, 8, 10, 4, 3] <- 7
+                        // [6, 8, 10, 4, 1] <- 2
+                        if ((currentDirection == Direction.UP && level > previousList.getFirst() && level < this.list.get(i))  || (currentDirection == Direction.DOWN && level < previousList.getFirst() && level > this.list.get(i) )){
+                            list.add(i, level);
+                            i = 0;
+                            break;
+                        }
+
+                        currentDirection =  this.direction;
+
                 }
                 if (i == list.size()) list.addLast(level);
             } catch (Exception e) {
@@ -243,7 +294,9 @@ public class Elevator extends Thread {
         }
 
         logger.logInfo(String.format("Succesfully added level %d (Real level: %s) to list. \n Previous list: %s \n New list: %s", level, this.getRealLevel(level), previousList, this.getListCopy()), Level.INFO);
-        
+        synchronized(this.list){
+            this.list.notify();
+        }
     }
 
     @Override
@@ -254,7 +307,47 @@ public class Elevator extends Thread {
 
     @Override
     public void run(){
+       while(!kill){
+            while(this.isRunning){
+                try {
+                    if (this.getListCopy().isEmpty()){
+                        logger.logInfo("Nothing to execute. waiting...", Level.INFO);
+                        synchronized(this.list){
+                            this.list.wait();
+                        }
+                    }
+                    if (!this.isRunning) break;
+                    this.move(this.list.poll());
+                    try{
+                        Thread.sleep(Elevator.stopTime);
+                    } catch (InterruptedException e){
+                        logger.logInfo("Execution stopped.", Level.WARNING);
+                    }
+                } catch (Exception e){
+                    if (this.getListCopy().isEmpty()){
+                        logger.logInfo("FATAL: Elevator failed while list is empty. Exiting..."  
+                        + "\nError message: "  + e.getMessage(), Level.SEVERE);
+                        e.printStackTrace();
 
+                        return;
+                    }
+                    logger.logInfo("FATAL: Elevator encountered error while executing. Elevator reset."
+                    + "\nError message: "  + e.getMessage() , Level.SEVERE);
+                    e.printStackTrace();
+                    this.reset();
+                }
+            }
+            logger.logInfo("Sleeping until execution resumes...", Level.INFO);
+            try{
+                synchronized(isRunning){
+                    while(!isRunning){
+                        isRunning.wait();
+                    }
+                }
+            } catch (InterruptedException e){
+                //Don´t do anything.
+            }
+        }
     }
 }
 
