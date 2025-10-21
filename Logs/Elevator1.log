@@ -1,0 +1,26 @@
+Oct 21, 2025 10:48:41 AM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator created with moveTime: 1ms, stopTime 10000ms, max level: 10, 0 of wich are subfloors
+Oct 21, 2025 10:48:41 AM ElevatorLogger logInfo
+WARNING: Elevator 1: Level 50 is unable to be reached (max level: 10).
+Oct 21, 2025 10:50:38 AM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 5 (Real level: 5) to list. 
+ Previous list: [5] 
+ New list: [5]
+Oct 21, 2025 10:50:40 AM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 7 (Real level: 7) to list. 
+ Previous list: [5, 7] 
+ New list: [5, 7]
+Oct 21, 2025 10:50:43 AM ElevatorLogger logInfo
+WARNING: Elevator 1: Level 19 is unable to be reached (max level: 10).
+Oct 21, 2025 10:50:46 AM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 3 (Real level: 3) to list. 
+ Previous list: [3, 5, 7] 
+ New list: [3, 5, 7]
+Oct 21, 2025 10:50:50 AM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 9 (Real level: 9) to list. 
+ Previous list: [3, 5, 7, 9] 
+ New list: [3, 5, 7, 9]
+Oct 21, 2025 10:51:17 AM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator created with moveTime: 1ms, stopTime 10000ms, max level: 10, 0 of wich are subfloors
+Oct 21, 2025 10:51:17 AM ElevatorLogger logInfo
+WARNING: Elevator 1: Level 50 is unable to be reached (max level: 10).
