@@ -114,8 +114,8 @@ public class Elevator extends Thread {
         if (!Elevator.isRunning) {
             Elevator.moveTime = (moveTime > 0)? moveTime : 1000;
             Elevator.stopTime = (stopTime > 0)? stopTime : 1000;
-            Elevator.maxLevel = (maxLevel > 1)? maxLevel : 10;
-            Elevator.subfloors = (subfloors > 0 && subfloors < Elevator.maxLevel)? subfloors: 0;
+            Elevator.maxLevel = (maxLevel > 1)? maxFloors : 10;
+            Elevator.subfloors = (subfloors >= 0 && subfloors < Elevator.maxLevel)? subfloors: 0;
         }
     }
 
@@ -126,12 +126,7 @@ public class Elevator extends Thread {
      * @param maxFloors Niveles. Por defecto 10 niveles.
      */
     public static void configure(int moveTime, int stopTime, int maxFloors){
-        if (!Elevator.isRunning) {
-            Elevator.moveTime = (moveTime > 0)? moveTime : 1000;
-            Elevator.stopTime = (stopTime > 0)? stopTime : 1000;
-            Elevator.maxLevel = (maxLevel > 1)? maxLevel : 10;
-            Elevator.subfloors = 0;
-        }
+        configure(moveTime, stopTime, maxFloors, 0);
     }
 
     /** 
