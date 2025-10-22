@@ -9,10 +9,6 @@ public class LogicElevator {
     private ArrayList<peticionusuario> solicitudes;
     // recibe cuantos pisos tenemos para saber  los limites de donde se puede mover 
     private int pisos;
-    // 
-    private int tiempoMovimiento;
-    //
-    private int tiempo;
     // devuleve  si el manager esta activo 
     private boolean trabajando;
     // solos los hilos de trabajo simultaneo de cada elevador 
@@ -20,11 +16,9 @@ public class LogicElevator {
     // nos guarda la informacion e cada accion que hace el manager 
     private Logger logger;
 //constructor de la logica del elevador 
-    public LogicElevator(int pisos, ArrayList<Elevator> elevadores, int tiempoMovimiento, int tiempo) {
+    public LogicElevator(int pisos, ArrayList<Elevator> elevadores) {
         this.pisos = pisos;
         this.elevadores = elevadores;
-        this.tiempoMovimiento = tiempoMovimiento;
-        this.tiempo = tiempo;
         this.solicitudes = new ArrayList<>();
         this.trabajando = false;
         this.procesadores = new Thread(this::procesarSolicitudes);
@@ -149,5 +143,20 @@ public class LogicElevator {
 // nos devuele cuantas solicitudes pendientes tenemos
     public int getSolicitudesPendientes(){
          return solicitudes.size();
+    }
+
+    // Este método es para cuando una persona DENTRO del elevador elige un piso destino
+    public void destinoInterno(int idElevador, int nivelDestino) {
+        // Buscar el elevador por su ID
+        for (int i = 0; i < elevadores.size(); i++) {
+            Elevator elevador = elevadores.get(i);
+            if (elevador.getID() == idElevador) {
+                // Enviar el comando directamente al elevador
+                elevador.addCommand(nivelDestino);
+                logger.info("Destino interno: Elevador " + idElevador + " irá al piso " + nivelDestino);
+                return;
+            }
+        }
+        logger.warning("No se encontró el elevador con ID: " + idElevador);
     }
 }

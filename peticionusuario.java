@@ -3,7 +3,7 @@ public class peticionusuario{
     int nivel;
     long tiempo;
     Direction direccion;
-    public peticionusuario (int nivel,long tiempo, Direction direccion ){
+    public peticionusuario (int nivel, Direction direccion ){
         this.nivel = nivel;
         this.direccion = direccion;
         this.tiempo = tiempo;
