@@ -52,4 +52,12 @@ class ElevatorLogger{
     public void logInfo(String message, Level level){
             logger.log(level,(this.logger.getName()) + ": " + message);
     }
+
+    /**
+     * Cierra el acceso al archivo, borrando el archivo .lck asociado.
+     * Una vez cerrado, el archivo no se podrá volver a abrir.
+     */
+    public void close(){
+        fh.close();
+    }
 }

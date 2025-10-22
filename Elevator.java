@@ -32,7 +32,6 @@ public class Elevator extends Thread {
     private int level;
     private int previousStop;
     private LinkedList<Integer> list;
-    private boolean sync;
     private ElevatorLogger logger;
 
     /**
@@ -47,7 +46,6 @@ public class Elevator extends Thread {
         this.level = 1;
         this.previousStop = 1;
         this.logger = new ElevatorLogger(id);
-        this.sync = false;
 
         this.isRunning = true;
         this.kill = false;
@@ -168,11 +166,14 @@ public class Elevator extends Thread {
 
     /**
      * Mata al elevador. Una vez muerto, no puede ser reactivado.
+     * En ejecución normal, esta debe ser la única forma que el elevador cierra.
+     * De lo contrario, se mantendrá un archivo .lck en Logs vacío.
      */
     public void kill(){
         logger.logInfo("Elevator killed.", Level.INFO);
         this.isRunning = false;
         this.kill = true;
+        logger.close();
         notify();
     }
 
@@ -338,10 +339,11 @@ public class Elevator extends Thread {
                 }
             }
             logger.logInfo("Sleeping until execution resumes...", Level.INFO);
+            if (kill) return;
             try{
                 synchronized(isRunning){
                     while(!isRunning){
-                        isRunning.wait();
+                        isRunning.wait(); //TODO: Arreglar resume
                     }
                 }
             } catch (InterruptedException e){

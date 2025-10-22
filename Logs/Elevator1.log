@@ -1,26 +1,164 @@
-Oct 21, 2025 10:48:41 AM ElevatorLogger logInfo
-INFO: Elevator 1: Elevator created with moveTime: 1ms, stopTime 10000ms, max level: 10, 0 of wich are subfloors
-Oct 21, 2025 10:48:41 AM ElevatorLogger logInfo
-WARNING: Elevator 1: Level 50 is unable to be reached (max level: 10).
-Oct 21, 2025 10:50:38 AM ElevatorLogger logInfo
+Oct 21, 2025 5:32:44 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator created with moveTime: 1000ms, stopTime 5000ms, max level: 10, 0 of wich are subfloors
+Oct 21, 2025 5:32:44 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator started/resumed operation with queue []
+Oct 21, 2025 5:32:44 PM ElevatorLogger logInfo
+INFO: Elevator 1: Nothing to execute. waiting...
+Oct 21, 2025 5:32:46 PM ElevatorLogger logInfo
 INFO: Elevator 1: Succesfully added level 5 (Real level: 5) to list. 
  Previous list: [5] 
  New list: [5]
-Oct 21, 2025 10:50:40 AM ElevatorLogger logInfo
+Oct 21, 2025 5:32:46 PM ElevatorLogger logInfo
+INFO: Elevator 1: Starting movement to floor 5 (Real level: 5). Direction: UP. Expected time: 4000ms
+Oct 21, 2025 5:32:48 PM ElevatorLogger logInfo
 INFO: Elevator 1: Succesfully added level 7 (Real level: 7) to list. 
- Previous list: [5, 7] 
- New list: [5, 7]
-Oct 21, 2025 10:50:43 AM ElevatorLogger logInfo
-WARNING: Elevator 1: Level 19 is unable to be reached (max level: 10).
-Oct 21, 2025 10:50:46 AM ElevatorLogger logInfo
+ Previous list: [7] 
+ New list: [7]
+Oct 21, 2025 5:32:48 PM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 6 (Real level: 6) to list. 
+ Previous list: [6, 7] 
+ New list: [6, 7]
+Oct 21, 2025 5:32:50 PM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 8 (Real level: 8) to list. 
+ Previous list: [6, 7, 8] 
+ New list: [6, 7, 8]
+Oct 21, 2025 5:32:50 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator finished moving to level 5 (Real level: 5) with actual time elapsed of 4035ms
+Oct 21, 2025 5:32:52 PM ElevatorLogger logInfo
 INFO: Elevator 1: Succesfully added level 3 (Real level: 3) to list. 
- Previous list: [3, 5, 7] 
- New list: [3, 5, 7]
-Oct 21, 2025 10:50:50 AM ElevatorLogger logInfo
-INFO: Elevator 1: Succesfully added level 9 (Real level: 9) to list. 
- Previous list: [3, 5, 7, 9] 
- New list: [3, 5, 7, 9]
-Oct 21, 2025 10:51:17 AM ElevatorLogger logInfo
-INFO: Elevator 1: Elevator created with moveTime: 1ms, stopTime 10000ms, max level: 10, 0 of wich are subfloors
-Oct 21, 2025 10:51:17 AM ElevatorLogger logInfo
-WARNING: Elevator 1: Level 50 is unable to be reached (max level: 10).
+ Previous list: [6, 7, 8, 3] 
+ New list: [6, 7, 8, 3]
+Oct 21, 2025 5:32:54 PM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 1 (Real level: 1) to list. 
+ Previous list: [6, 7, 8, 3, 1] 
+ New list: [6, 7, 8, 3, 1]
+Oct 21, 2025 5:32:55 PM ElevatorLogger logInfo
+INFO: Elevator 1: Starting movement to floor 6 (Real level: 6). Direction: UP. Expected time: 1000ms
+Oct 21, 2025 5:32:56 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator finished moving to level 6 (Real level: 6) with actual time elapsed of 1011ms
+Oct 21, 2025 5:33:01 PM ElevatorLogger logInfo
+INFO: Elevator 1: Starting movement to floor 7 (Real level: 7). Direction: UP. Expected time: 1000ms
+Oct 21, 2025 5:33:02 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator finished moving to level 7 (Real level: 7) with actual time elapsed of 1018ms
+Oct 21, 2025 5:33:07 PM ElevatorLogger logInfo
+INFO: Elevator 1: Starting movement to floor 8 (Real level: 8). Direction: UP. Expected time: 1000ms
+Oct 21, 2025 5:33:08 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator finished moving to level 8 (Real level: 8) with actual time elapsed of 1016ms
+Oct 21, 2025 5:33:13 PM ElevatorLogger logInfo
+INFO: Elevator 1: Starting movement to floor 3 (Real level: 3). Direction: DOWN. Expected time: 5000ms
+Oct 21, 2025 5:33:18 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator finished moving to level 3 (Real level: 3) with actual time elapsed of 5054ms
+Oct 21, 2025 5:33:23 PM ElevatorLogger logInfo
+INFO: Elevator 1: Starting movement to floor 1 (Real level: 1). Direction: DOWN. Expected time: 2000ms
+Oct 21, 2025 5:33:25 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator finished moving to level 1 (Real level: 1) with actual time elapsed of 2029ms
+Oct 21, 2025 5:33:30 PM ElevatorLogger logInfo
+INFO: Elevator 1: Nothing to execute. waiting...
+Oct 21, 2025 5:35:09 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator killed.
+Oct 21, 2025 5:36:40 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator created with moveTime: 1000ms, stopTime 5000ms, max level: 10, 0 of wich are subfloors
+Oct 21, 2025 5:36:40 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator started/resumed operation with queue []
+Oct 21, 2025 5:36:40 PM ElevatorLogger logInfo
+INFO: Elevator 1: Nothing to execute. waiting...
+Oct 21, 2025 5:36:48 PM ElevatorLogger logInfo
+INFO: Elevator 1: Execution stopped.
+Oct 21, 2025 5:36:51 PM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 2 (Real level: 2) to list. 
+ Previous list: [2] 
+ New list: [2]
+Oct 21, 2025 5:36:53 PM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 4 (Real level: 4) to list. 
+ Previous list: [2, 4] 
+ New list: [2, 4]
+Oct 21, 2025 5:36:57 PM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 5 (Real level: 5) to list. 
+ Previous list: [2, 4, 5] 
+ New list: [2, 4, 5]
+Oct 21, 2025 5:36:59 PM ElevatorLogger logInfo
+INFO: Elevator 1: Execution resumed.
+Oct 21, 2025 5:37:08 PM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 6 (Real level: 6) to list. 
+ Previous list: [2, 4, 5, 6] 
+ New list: [2, 4, 5, 6]
+Oct 21, 2025 5:37:50 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator killed.
+Oct 21, 2025 5:38:01 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator created with moveTime: 1000ms, stopTime 5000ms, max level: 10, 0 of wich are subfloors
+Oct 21, 2025 5:38:01 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator started/resumed operation with queue []
+Oct 21, 2025 5:38:01 PM ElevatorLogger logInfo
+INFO: Elevator 1: Nothing to execute. waiting...
+Oct 21, 2025 5:38:04 PM ElevatorLogger logInfo
+INFO: Elevator 1: Execution stopped.
+Oct 21, 2025 5:38:36 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator killed.
+Oct 21, 2025 5:38:43 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator created with moveTime: 1000ms, stopTime 5000ms, max level: 10, 0 of wich are subfloors
+Oct 21, 2025 5:38:43 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator started/resumed operation with queue []
+Oct 21, 2025 5:38:43 PM ElevatorLogger logInfo
+INFO: Elevator 1: Nothing to execute. waiting...
+Oct 21, 2025 5:38:44 PM ElevatorLogger logInfo
+INFO: Elevator 1: Execution stopped.
+Oct 21, 2025 5:38:44 PM ElevatorLogger logInfo
+INFO: Elevator 1: Sleeping until execution resumes...
+Oct 21, 2025 5:38:52 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator killed.
+Oct 21, 2025 5:42:27 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator created with moveTime: 1000ms, stopTime 5000ms, max level: 10, 0 of wich are subfloors
+Oct 21, 2025 5:42:27 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator started/resumed operation with queue []
+Oct 21, 2025 5:42:27 PM ElevatorLogger logInfo
+INFO: Elevator 1: Nothing to execute. waiting...
+Oct 21, 2025 5:42:30 PM ElevatorLogger logInfo
+INFO: Elevator 1: Execution stopped.
+Oct 21, 2025 5:42:30 PM ElevatorLogger logInfo
+INFO: Elevator 1: Sleeping until execution resumes...
+Oct 21, 2025 5:42:34 PM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 2 (Real level: 2) to list. 
+ Previous list: [2] 
+ New list: [2]
+Oct 21, 2025 5:42:36 PM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 3 (Real level: 3) to list. 
+ Previous list: [2, 3] 
+ New list: [2, 3]
+Oct 21, 2025 5:42:37 PM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 4 (Real level: 4) to list. 
+ Previous list: [2, 3, 4] 
+ New list: [2, 3, 4]
+Oct 21, 2025 5:42:39 PM ElevatorLogger logInfo
+INFO: Elevator 1: Execution resumed.
+Oct 21, 2025 5:42:45 PM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 5 (Real level: 5) to list. 
+ Previous list: [2, 3, 4, 5] 
+ New list: [2, 3, 4, 5]
+Oct 21, 2025 5:43:01 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator killed.
+Oct 21, 2025 5:44:26 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator created with moveTime: 1000ms, stopTime 5000ms, max level: 10, 0 of wich are subfloors
+Oct 21, 2025 5:44:26 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator started/resumed operation with queue []
+Oct 21, 2025 5:44:26 PM ElevatorLogger logInfo
+INFO: Elevator 1: Nothing to execute. waiting...
+Oct 21, 2025 5:44:29 PM ElevatorLogger logInfo
+INFO: Elevator 1: Execution stopped.
+Oct 21, 2025 5:44:29 PM ElevatorLogger logInfo
+INFO: Elevator 1: Sleeping until execution resumes...
+Oct 21, 2025 5:44:34 PM ElevatorLogger logInfo
+INFO: Elevator 1: Execution resumed.
+Oct 21, 2025 5:44:37 PM ElevatorLogger logInfo
+INFO: Elevator 1: Succesfully added level 2 (Real level: 2) to list. 
+ Previous list: [2] 
+ New list: [2]
+Oct 21, 2025 5:45:16 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator killed.
+Oct 21, 2025 5:59:08 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator created with moveTime: 1000ms, stopTime 5000ms, max level: 10, 0 of wich are subfloors
+Oct 21, 2025 5:59:08 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator started/resumed operation with queue []
+Oct 21, 2025 5:59:08 PM ElevatorLogger logInfo
+INFO: Elevator 1: Nothing to execute. waiting...
+Oct 21, 2025 5:59:11 PM ElevatorLogger logInfo
+INFO: Elevator 1: Elevator killed.
