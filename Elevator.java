@@ -197,9 +197,6 @@ public class Elevator extends Thread {
         }
 
         int movement = targetLevel - level;
-        if (movement > 0) this.direction = Direction.UP;
-        else if (movement < 0) this.direction = Direction.DOWN;
-        else this.direction = null;
 
         long start = System.currentTimeMillis();
 
@@ -218,6 +215,15 @@ public class Elevator extends Thread {
 
         long end = System.currentTimeMillis();
         logger.logInfo(String.format("Elevator finished moving to level %d (Real level: %s) with actual time elapsed of %dms", targetLevel, this.getRealLevel(targetLevel), end - start), Level.INFO);
+    }
+
+    /**
+     * Actualiza la dirección del elevador.
+     */
+    public void updateDirection(){
+        if(this.list.isEmpty()) this.direction = null;
+        else if (level > this.list.getFirst()) this.direction = Direction.DOWN;
+        else this.direction = Direction.UP;
     }
 
     /**
@@ -319,6 +325,7 @@ public class Elevator extends Thread {
                     }
                     if (!this.isRunning) break;
                     this.move(this.list.poll());
+                    this.updateDirection();
                     try{
                         Thread.sleep(Elevator.stopTime);
                     } catch (InterruptedException e){
