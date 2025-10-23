@@ -138,7 +138,7 @@ public class Elevator extends Thread {
     }
 
     /**
-     * Detiene la ejecución y notifica a los consumidores de la lista para que continuen su ejecución.
+     * Detiene la ejecución del elevador de forma temporal.
      */
     public void stopExecution(){
         if (!this.isRunning) {
@@ -149,7 +149,14 @@ public class Elevator extends Thread {
         logger.logInfo("Execution stopped.", Level.INFO);
     }
 
+    /**
+     * Resume la ejecución del elevador, siempre que este siga existiendo. Este metodo no puede resumir un elevador que haya sido matado con kill().
+     */
     public void resumeExecution(){
+        if (this.kill){
+            logger.logInfo("Elevator has been killed. Cannot resume execution", Level.WARNING);
+            return;
+        }
         if (this.isRunning) {
             logger.logInfo("Execution already resumed. Ignoring.", Level.WARNING);
             return;
@@ -181,7 +188,6 @@ public class Elevator extends Thread {
      * Valida que el nivel objetivo esté dentro de los límites configurados.
      * Actualiza la dirección en función del movimiento y simula el tiempo de desplazamiento con Thread.sleep.
      * Si el hilo es interrumpido, vuelve a insertar el objetivo en la cola y registra la condición.
-     * No puede llamarse a este método si el elevador ya se está moviendo.
      *
      * @param targetLevel Nivel destino al que se desea mover el elevador (1..maxLevel)
      */
@@ -205,7 +211,7 @@ public class Elevator extends Thread {
         while(targetLevel != level){
             try {
                 if (this.kill) return;
-                if (!this.isRunning) throw new InterruptedException("Elevator is stopped");  
+                if (!this.isRunning) throw new InterruptedException("Elevator has been stopped");  
 
                 Thread.sleep(Elevator.moveTime);
 
