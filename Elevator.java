@@ -147,9 +147,6 @@ public class Elevator extends Thread {
         }
         this.isRunning = false;
         logger.logInfo("Execution stopped.", Level.INFO);
-        synchronized(this.list){
-            this.list.notify();
-        }
     }
 
     public void resumeExecution(){
@@ -159,8 +156,8 @@ public class Elevator extends Thread {
         }
         this.isRunning = true;
         logger.logInfo("Execution resumed.", Level.INFO);
-        synchronized(isRunning){
-            isRunning.notify();
+        synchronized(this.list){
+            this.list.notify();
         }
     }
 
@@ -174,7 +171,9 @@ public class Elevator extends Thread {
         this.isRunning = false;
         this.kill = true;
         logger.close();
-        notify();
+        synchronized(this.list){
+            this.list.notify();
+        }
     }
 
     /** 
@@ -205,11 +204,23 @@ public class Elevator extends Thread {
         logger.logInfo(String.format("Starting movement to floor %d (Real level: %s). Direction: %s. Expected time: %dms", targetLevel, this.getRealLevel(targetLevel), this.direction.toString(), Math.abs(movement) * Elevator.moveTime), Level.INFO);
         while(targetLevel != level){
             try {
+                if (this.kill) return;
+                if (!this.isRunning) throw new InterruptedException("Elevator is stopped");  
+
                 Thread.sleep(Elevator.moveTime);
+
+                if (!this.getListCopy().isEmpty() && ((this.direction == Direction.UP && targetLevel > this.getListCopy().getFirst())  || (this.direction == Direction.DOWN && targetLevel < this.getListCopy().getFirst()))) {
+                    logger.logInfo("Level added closer to target level. Updating list and moving to new target level.", Level.INFO);
+                    int newLevel = this.list.poll();
+                    this.addCommand(targetLevel);
+                    targetLevel = newLevel;
+
+                }
                 this.level = this.level + (Math.signum(movement) >= 0? 1: -1);
             } catch (InterruptedException e) {
-                this.addCommand(targetLevel);
                 logger.logInfo(String.format("Stopped execution at level %d (Real level: %s) with queue %s. Added level back to Queue.", this. level, this.getRealLevel(), this.getListCopy()), Level.WARNING);
+                this.addCommand(targetLevel);
+                return;
             }
         }
 
@@ -314,47 +325,36 @@ public class Elevator extends Thread {
 
     @Override
     public void run(){
-       while(!kill){
-            while(this.isRunning){
-                try {
-                    if (this.getListCopy().isEmpty()){
-                        logger.logInfo("Nothing to execute. waiting...", Level.INFO);
-                        synchronized(this.list){
-                            this.list.wait();
-                        }
-                    }
-                    if (!this.isRunning) break;
-                    this.move(this.list.poll());
-                    this.updateDirection();
-                    try{
-                        Thread.sleep(Elevator.stopTime);
-                    } catch (InterruptedException e){
-                        logger.logInfo("Execution stopped.", Level.WARNING);
-                    }
-                } catch (Exception e){
-                    if (this.getListCopy().isEmpty()){
-                        logger.logInfo("FATAL: Elevator failed while list is empty. Exiting..."  
-                        + "\nError message: "  + e.getMessage(), Level.SEVERE);
-                        e.printStackTrace();
+        while(true){
+            try {
 
-                        return;
+                while (!this.kill && (this.getListCopy().isEmpty() || !this.isRunning)){
+                    if (this.getListCopy().isEmpty()) logger.logInfo("Nothing to execute. waiting...", Level.INFO);
+                    synchronized(this.list){
+                        this.list.wait();
                     }
-                    logger.logInfo("FATAL: Elevator encountered error while executing. Elevator reset."
-                    + "\nError message: "  + e.getMessage() , Level.SEVERE);
+                }
+                if (this.kill) return;
+
+                this.updateDirection();
+                this.move(this.list.poll());
+                this.updateDirection();
+                try{
+                    Thread.sleep(Elevator.stopTime);
+                } catch (InterruptedException e){
+                    logger.logInfo("Execution stopped suddenly while waiting on floor.", Level.WARNING);
+                }
+            } catch (Exception e){
+                if (this.getListCopy().isEmpty()){
+                    logger.logInfo("FATAL: Elevator failed while list is empty. Exiting..."  
+                    + "\nError message: "  + e.getMessage(), Level.SEVERE);
                     e.printStackTrace();
-                    this.reset();
+                    this.kill();
                 }
-            }
-            logger.logInfo("Sleeping until execution resumes...", Level.INFO);
-            if (kill) return;
-            try{
-                synchronized(isRunning){
-                    while(!isRunning){
-                        isRunning.wait(); //TODO: Arreglar resume
-                    }
-                }
-            } catch (InterruptedException e){
-                //Don´t do anything.
+                logger.logInfo("FATAL: Elevator encountered error while executing. Elevator reset."
+                + "\nError message: "  + e.getMessage() , Level.SEVERE);
+                e.printStackTrace();
+                this.reset();
             }
         }
     }
