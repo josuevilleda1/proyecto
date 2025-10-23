@@ -174,6 +174,7 @@ public class Elevator extends Thread {
      * De lo contrario, se mantendrá un archivo .lck en Logs vacío.
      */
     public void kill(){
+        if (this.kill) return;
         logger.logInfo("Elevator killed.", Level.INFO);
         this.isRunning = false;
         this.kill = true;
@@ -222,6 +223,7 @@ public class Elevator extends Thread {
                     targetLevel = newLevel;
 
                 }
+
                 this.level = this.level + (Math.signum(movement) >= 0? 1: -1);
             } catch (InterruptedException e) {
                 logger.logInfo(String.format("Stopped execution at level %d (Real level: %s) with queue %s. Added level back to Queue.", this. level, this.getRealLevel(), this.getListCopy()), Level.WARNING);
@@ -300,8 +302,6 @@ public class Elevator extends Thread {
                             }
                         }
 
-                        // [6, 8, 10, 4, 3] <- 7
-                        // [6, 8, 10, 4, 1] <- 2
                         if ((currentDirection == Direction.UP && level > previousList.getFirst() && level < this.list.get(i))  || (currentDirection == Direction.DOWN && level < previousList.getFirst() && level > this.list.get(i) )){
                             list.add(i, level);
                             i = 0;
