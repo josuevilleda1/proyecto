@@ -6,32 +6,16 @@ import java.util.logging.Level;
 
 class ElevatorLogger{
     Logger logger;
-    FileHandler fh;
+    String name;
 
     public ElevatorLogger(int ID){
-        this.logger = Logger.getLogger("Elevator " + ID);
-        try {
-            this.fh = new FileHandler("Logs/Elevator" + ID + ".log", true);
-            fh.setLevel(Level.CONFIG);
-            this.logger.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-        } catch (IOException e){
-            System.err.println("IOException reported: " + e);
-        }
+        this.name = "Elevator" + Integer.toString(ID);
+        this.logger = Logger.getLogger(this.name);
     }
 
     public ElevatorLogger(String name){
+        this.name = name;
         this.logger = Logger.getLogger(name);
-        try {
-            this.fh = new FileHandler("Logs/" + name + ".log", true);
-            fh.setLevel(Level.CONFIG);
-            this.logger.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-        } catch (IOException e){
-            System.err.println("IOException reported: " + e);
-        }
     }
 
                 /**
@@ -50,14 +34,20 @@ class ElevatorLogger{
              *  incluir un nivel (idealmente que sea adecuado).
              */
     public void logInfo(String message, Level level){
-            logger.log(level,(this.logger.getName()) + ": " + message);
-    }
+        
+            
+        
+            try {
+                FileHandler fh = new FileHandler("Logs/" + this.name + ".log", true);
+                this.logger.addHandler(fh);
+                SimpleFormatter formatter = new SimpleFormatter();
+                fh.setFormatter(formatter);
 
-    /**
-     * Cierra el acceso al archivo, borrando el archivo .lck asociado.
-     * Una vez cerrado, el archivo no se podrá volver a abrir.
-     */
-    public void close(){
-        fh.close();
+                logger.log(level,(this.logger.getName()) + ": " + message);
+
+                fh.close();
+            } catch (IOException e){
+                System.err.println("IOException reported: " + e);
+            }
     }
 }

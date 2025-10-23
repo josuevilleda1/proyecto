@@ -178,7 +178,6 @@ public class Elevator extends Thread {
         logger.logInfo("Elevator killed.", Level.INFO);
         this.isRunning = false;
         this.kill = true;
-        logger.close();
         synchronized(this.list){
             this.list.notify();
         }
