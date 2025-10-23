@@ -27,6 +27,7 @@ public class Elevator extends Thread {
     private Boolean isRunning;
     //Causa que el elevador termine su ejecución, matándolo
     private boolean kill;
+    private boolean isReset;
     private int id;
     private Direction direction;
     private int level;
@@ -46,6 +47,7 @@ public class Elevator extends Thread {
         this.level = 1;
         this.previousStop = 1;
         this.logger = new ElevatorLogger(id);
+        this.isReset = false;
 
         this.isRunning = true;
         this.kill = false;
@@ -87,12 +89,19 @@ public class Elevator extends Thread {
     public int getPreviousStop(){ return this.previousStop; }
 
     /**
+     * Obtiene si el elevador esta en estado de reset, es decir, si esta en el primer piso y no tiene nada en cola.
+     * @return
+     */
+    public boolean isReset() { return this.isReset; }
+
+    /**
      * Reinicia la cola de peticiones y mueve el elevador al nivel 1.
      */
     public void reset() {
         this.list.clear();
         logger.logInfo("Elevator reset. Waiting for previous movement to finish...", Level.INFO);
         this.move(1);
+        this.isReset = true;
         logger.logInfo("Elevator reset succesfully.", Level.INFO);
     }
 
@@ -220,7 +229,7 @@ public class Elevator extends Thread {
                     int newLevel = this.list.poll();
                     this.addCommand(targetLevel);
                     targetLevel = newLevel;
-
+                    if (targetLevel == this.getLevel()) return;
                 }
 
                 this.level = this.level + (Math.signum(movement) >= 0? 1: -1);
@@ -264,6 +273,9 @@ public class Elevator extends Thread {
             logger.logInfo(String.format("Level requested (%d) (Real level: %s) is already queued. Ignoring request.", level, this.getRealLevel(level)), Level.WARNING);
             return;
         }
+
+        this.isReset = false;
+
         Direction currentDirection = this.direction;
         List<Integer> previousList = this.getListCopy();
 
