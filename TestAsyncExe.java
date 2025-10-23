@@ -9,21 +9,38 @@ public class TestAsyncExe {
         );
 
         Elevator.configure(1000, 5000, 10);
-        Elevator testElevator = new Elevator();
-        testElevator.start();
+        Elevator testElevator1 = new Elevator();
+        testElevator1.start();
         while(true){
+            Elevator currentScope = testElevator1;
+            System.out.print(
+                """
+                        Ingrese eleccion:
+                        1-x. ingresar nivel
+                        0. Detener ejecucion
+                        -1 Resumir ejecucion
+                        -2 Matar elevador
+                        -3 salir
+                        Eleccion: """
+            );
+            System.out.flush();
             int command = Integer.parseInt(tec.readLine());
             if (command == 0) {
-                testElevator.stopExecution();
+                currentScope.stopExecution();
                 continue;
             }
             else if (command == -1) {
-                testElevator.resumeExecution();
+                currentScope.resumeExecution();
                 continue;
             }
-            else if (command == -2) break;
-            testElevator.addCommand(command);
+            else if (command == -2) {
+                currentScope.kill();
+            }
+            else if (command == -3) {
+                testElevator1.kill();
+                return;
+            }
+            currentScope.addCommand(command);
         }
-        testElevator.kill();
     }
 }
