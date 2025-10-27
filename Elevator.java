@@ -30,7 +30,7 @@ public class Elevator extends Thread {
     private boolean isReset;
     private int id;
     private Direction direction;
-    private int level;
+    protected int level;
     private int previousStop;
     private LinkedList<Integer> list;
     private ElevatorLogger logger;
@@ -229,10 +229,11 @@ public class Elevator extends Thread {
                     int newLevel = this.list.poll();
                     this.addCommand(targetLevel);
                     targetLevel = newLevel;
-                    if (targetLevel == this.getLevel()) return;
                 }
-
+                
+                if (targetLevel == this.getLevel()) return;
                 this.level = this.level + (Math.signum(movement) >= 0? 1: -1);
+                
             } catch (InterruptedException e) {
                 logger.logInfo(String.format("Stopped execution at level %d (Real level: %s) with queue %s. Added level back to Queue.", this. level, this.getRealLevel(), this.getListCopy()), Level.WARNING);
                 this.addCommand(targetLevel);
