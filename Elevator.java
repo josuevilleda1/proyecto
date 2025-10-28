@@ -1,4 +1,3 @@
-import java.io.FileReader;
 import java.lang.Thread;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -102,6 +101,12 @@ public class Elevator extends Thread {
         this.list.clear();
         logger.logInfo("Elevator reset. Waiting for previous movement to finish...", Level.INFO);
         this.move(1);
+
+        if (!this.getListCopy().isEmpty()){
+            logger.logInfo("Command added before elevator was reset!", Level.WARNING);
+            return;
+        }
+
         this.isReset = true;
         logger.logInfo("Elevator reset succesfully.", Level.INFO);
     }
@@ -157,6 +162,7 @@ public class Elevator extends Thread {
      */
     public static void configure(int moveTime, int stopTime, int maxFloors){
         ConfigLoader.WriteFile(moveTime, stopTime, maxFloors, 0);
+        configure();
     }
 
     /**
@@ -229,22 +235,26 @@ public class Elevator extends Thread {
 
         this.previousStop = level;
 
-        logger.logInfo(String.format("Starting movement to floor %d (Real level: %s). Direction: %s. Expected time: %dms", targetLevel, this.getRealLevel(targetLevel), this.direction.toString(), Math.abs(movement) * Elevator.moveTime), Level.INFO);
+        logger.logInfo(String.format("Starting movement to floor %d (Real level: %s). Direction: %s. Expected time: %dms", targetLevel, this.getRealLevel(targetLevel), this.direction == null? "NONE": this.direction.toString(), Math.abs(movement) * Elevator.moveTime), Level.INFO);
         while(targetLevel != level){
             try {
-                if (this.kill) return;
+                if (this.kill)
                 if (!this.isRunning) throw new InterruptedException("Elevator has been stopped");  
 
                 Thread.sleep(Elevator.moveTime);
 
                 if (!this.getListCopy().isEmpty() && ((this.direction == Direction.UP && targetLevel > this.getListCopy().getFirst())  || (this.direction == Direction.DOWN && targetLevel < this.getListCopy().getFirst()))) {
-                    logger.logInfo("Level added closer to target level. Updating list and moving to new target level.", Level.INFO);
                     int newLevel = this.list.poll();
                     this.addCommand(targetLevel);
                     targetLevel = newLevel;
+                    logger.logInfo("Level added closer to target level. Updating list and moving to new target level. New expected time: " + Math.abs(targetLevel - this.getLevel()) * Elevator.moveTime + "ms", Level.INFO);
                 }
                 
-                if (targetLevel == this.getLevel()) return;
+                if (
+                    (this.direction == Direction.UP && targetLevel <= this.getLevel()) || 
+                    (this.direction == Direction.DOWN && targetLevel >= this.getLevel())
+                ) break;
+
                 this.level = this.level + (Math.signum(movement) >= 0? 1: -1);
 
             } catch (InterruptedException e) {
