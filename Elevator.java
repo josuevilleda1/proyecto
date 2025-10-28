@@ -1,3 +1,4 @@
+import java.io.FileReader;
 import java.lang.Thread;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -123,27 +124,39 @@ public class Elevator extends Thread {
     }
 
     /**
-     * Configura los elevadores.
+     * Configura los elevadores, leyendo los datos del archivo de configuración.
+     */
+    public static void configure(){
+        ConfigData data = ConfigLoader.ReadFile();
+
+        if (data == null) return;
+
+        Elevator.moveTime = data.getMoveTime();
+        Elevator.stopTime = data.getStopTime();
+        Elevator.maxLevel = data.getMaxLevel();
+        Elevator.subfloors = data.getSubfloors();
+    }
+
+    /**
+     * Configura los elevadores, actualizando el archivo de configuración.
      * @param moveTime Tiempo de movimiento de los elevadores en milisegundos, por defecto 1000ms.
      * @param stopTime Tiempo de recogida/descarga de pasageros en milisegundos, por defecto 1000ms.
      * @param maxFloors Niveles (incluyendo sotanos). Por defecto 10
      * @param subfloors Sotanos que existen en funcion de los niveles. Por defecto 0.
      */
-    public static void configure(int moveTime, int stopTime, int maxFloors, int subfloors) {
-            Elevator.moveTime = (moveTime > 0)? moveTime : 1000;
-            Elevator.stopTime = (stopTime > 0)? stopTime : 1000;
-            Elevator.maxLevel = (maxLevel > 1)? maxFloors : 10;
-            Elevator.subfloors = (subfloors >= 0 && subfloors < Elevator.maxLevel)? subfloors: 0;
+    public static void configure(int moveTime, int stopTime, int maxFloors, int subfloors){
+        ConfigLoader.WriteFile(moveTime, stopTime, maxLevel, subfloors);
+        configure();
     }
 
     /**
-     * Configura los elevadores, asumiendo que no hay sotanos.
+     * Configura los elevadores, actualizando el archivo de configuración.
      * @param moveTime Tiempo de movimiento de los elevadores en milisegundos, por defecto 1000ms.
      * @param stopTime Tiempo de recogida/descarga de pasageros en milisegundos, por defecto 1000ms.
      * @param maxFloors Niveles. Por defecto 10 niveles.
      */
     public static void configure(int moveTime, int stopTime, int maxFloors){
-        configure(moveTime, stopTime, maxFloors, 0);
+        ConfigLoader.WriteFile(moveTime, stopTime, maxFloors, 0);
     }
 
     /**
@@ -233,7 +246,7 @@ public class Elevator extends Thread {
                 
                 if (targetLevel == this.getLevel()) return;
                 this.level = this.level + (Math.signum(movement) >= 0? 1: -1);
-                
+
             } catch (InterruptedException e) {
                 logger.logInfo(String.format("Stopped execution at level %d (Real level: %s) with queue %s. Added level back to Queue.", this. level, this.getRealLevel(), this.getListCopy()), Level.WARNING);
                 this.addCommand(targetLevel);
